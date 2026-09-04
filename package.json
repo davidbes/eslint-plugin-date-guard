@@ -1,0 +1,72 @@
+{
+  "name": "eslint-plugin-date-guard",
+  "version": "0.1.0",
+  "description": "ESLint rules for enforcing safe, consistent date handling in TypeScript and JavaScript.",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/davidbes/eslint-plugin-date-guard.git"
+  },
+  "bugs": {
+    "url": "https://github.com/davidbes/eslint-plugin-date-guard/issues"
+  },
+  "homepage": "https://github.com/davidbes/eslint-plugin-date-guard#readme",
+  "sideEffects": false,
+  "engines": {
+    "node": ">=18.18.0"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "format": "prettier --write \"**/*.{ts,js,json,md,yml,yaml}\"",
+    "format:check": "prettier --check \"**/*.{ts,js,json,md,yml,yaml}\"",
+    "test": "vitest run",
+    "typecheck": "tsc -p tsconfig.test.json --noEmit",
+    "verify": "npm run format:check && npm run typecheck && npm run test && npm run build",
+    "prepack": "npm run verify"
+  },
+  "keywords": [
+    "eslint",
+    "eslintplugin",
+    "eslint-plugin",
+    "date",
+    "typescript"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "@typescript-eslint/utils": "^8.0.0"
+  },
+  "peerDependencies": {
+    "@typescript-eslint/parser": "^8.0.0",
+    "eslint": "^9.0.0 || ^10.0.0",
+    "typescript": ">=5.0.0"
+  },
+  "peerDependenciesMeta": {
+    "@typescript-eslint/parser": {
+      "optional": true
+    },
+    "typescript": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "@typescript-eslint/parser": "^8.0.0",
+    "eslint": "^9.0.0 || ^10.0.0",
+    "prettier": "^3.9.6",
+    "typescript": "^5.0.0",
+    "vitest": "^3.0.0"
+  }
+}
