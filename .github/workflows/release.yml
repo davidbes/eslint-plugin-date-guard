@@ -4,15 +4,10 @@ on:
   release:
     types: [published]
   workflow_dispatch:
-    inputs:
-      dry_run:
-        description: Run npm publish --dry-run instead of publishing
-        required: true
-        type: boolean
-        default: true
 
 permissions:
   contents: read
+  id-token: write
 
 jobs:
   publish:
@@ -26,8 +21,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 22
-          cache: npm
+          node-version: 24
           registry-url: https://registry.npmjs.org
 
       - name: Install dependencies
@@ -42,13 +36,9 @@ jobs:
           node -e 'const pkg = require("./package.json"); const expected = "v" + pkg.version; if (process.env.GITHUB_REF_NAME !== expected) { throw new Error("Release tag " + process.env.GITHUB_REF_NAME + " does not match package version " + expected); }'
 
       - name: Publish dry run
-        if: github.event_name == 'workflow_dispatch' && inputs.dry_run
+        if: github.event_name == 'workflow_dispatch'
         run: npm publish --dry-run
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Publish
-        if: github.event_name == 'release' || (github.event_name == 'workflow_dispatch' && !inputs.dry_run)
+        if: github.event_name == 'release'
         run: npm publish
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
