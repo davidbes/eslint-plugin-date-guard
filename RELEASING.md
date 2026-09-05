@@ -2,39 +2,34 @@
 
 This package is published to the public npm registry as `eslint-plugin-date-guard`.
 
-## GitHub Actions Release
+## Release Workflow
 
-The repository includes a `Release` GitHub Actions workflow that publishes to npm with trusted publishing. It uses GitHub OIDC and does not require an `NPM_TOKEN` secret.
+Releases are staged through GitHub Actions and npm trusted publishing. The workflow uses GitHub OIDC and does not require an `NPM_TOKEN` secret.
 
-Trusted publishing is configured on npm after the package exists:
+The npm package settings should be:
 
-1. Open the package settings for `eslint-plugin-date-guard` on npmjs.com.
-2. Add a trusted publisher for GitHub Actions.
-3. Use `davidbes` as the organization/user, `eslint-plugin-date-guard` as the repository, and `release.yml` as the workflow filename.
-4. Allow direct `npm publish`.
+1. Trusted Publisher: GitHub Actions.
+2. Organization/user: `davidbes`.
+3. Repository: `eslint-plugin-date-guard`.
+4. Workflow filename: `release.yml`.
+5. Allowed actions: leave `Allow npm publish` unchecked, so the workflow can only run `npm stage publish`.
+6. Publishing access: require 2FA and disallow bypass 2FA tokens.
 
-After trusted publishing works, set the package publishing access to require 2FA and disallow tokens.
-
-To release a version:
+## Releasing a Version
 
 1. Update `version` in `package.json` and `package-lock.json`.
-2. Commit the change.
-3. Create and publish a GitHub Release with a tag matching the package version, for example `v0.1.0`.
-
-The workflow runs `npm ci`, `npm run verify`, checks that the release tag matches `package.json`, and then runs `npm publish` against the public npm registry.
-
-The workflow can also be run manually with `workflow_dispatch`, but manual runs only execute `npm publish --dry-run`.
-
-## First Publish
-
-Trusted publisher configuration is added from package settings, so the first publish of a new package is local and interactive:
+2. Run `npm run verify`.
+3. Commit and push the version change.
+4. Create and publish a GitHub Release with a tag matching the package version, for example `v0.1.1`.
+5. Wait for the workflow to stage the package.
+6. Review and approve the staged package with 2FA on npmjs.com, or use the CLI:
 
 ```sh
-npm login
-npm run verify
-npm publish
+npm stage list eslint-plugin-date-guard
+npm stage view <stage-id>
+npm stage approve <stage-id>
 ```
 
-Use an npm account with 2FA enabled and permission to publish `eslint-plugin-date-guard`.
+The workflow runs `npm ci`, `npm run verify`, checks that the release tag matches `package.json`, and then runs `npm stage publish` against the public npm registry. The package is not publicly released until a maintainer approves the staged package.
 
-Do not create a GitHub Release for the same version after publishing it locally. For example, if `0.1.0` is published locally, configure trusted publishing and use the workflow starting with `0.1.1` or the next intended version.
+The workflow can also be run manually with `workflow_dispatch`, but manual runs only execute `npm stage publish --dry-run`.
