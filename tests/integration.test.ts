@@ -31,6 +31,7 @@ describe("plugin integration", () => {
         const date = new Date();
         date.setMonth(0);
         date.toISOString().split("T")[0];
+        date < new Date();
       `,
       {
         filePath: new URL("fixtures/recommended.ts", import.meta.url).pathname,
@@ -40,6 +41,7 @@ describe("plugin integration", () => {
     expect(result.messages.map((message) => message.ruleId)).toEqual([
       "date-guard/no-date-mutation",
       "date-guard/no-date-string-hacks",
+      "date-guard/no-native-date-comparison",
     ]);
   });
 });

@@ -15,7 +15,7 @@ type DateGuardPlugin = {
 const plugin: DateGuardPlugin = {
   meta: {
     name: "eslint-plugin-date-guard",
-    version: "0.1.0",
+    version: "0.2.0",
   },
   rules,
   configs: {
@@ -33,6 +33,7 @@ plugin.configs.recommended = {
     "date-guard/no-date-string-hacks": "error",
     "date-guard/no-date-type-assertion": "error",
     "date-guard/no-manual-date-arithmetic": "error",
+    "date-guard/no-native-date-comparison": "error",
     "date-guard/no-native-date-formatting": "error",
   },
 };

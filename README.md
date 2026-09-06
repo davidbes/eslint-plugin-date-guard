@@ -2,7 +2,7 @@
 
 ESLint rules for enforcing safe, consistent date handling in TypeScript and JavaScript.
 
-`date-guard` is intended for teams that want date handling to go through approved date utilities, such as the date library already installed in the project, instead of ad-hoc native `Date` mutation, formatting, timestamp math, type assertions, or ISO-string slicing.
+`date-guard` is intended for teams that want date handling to go through approved date utilities, such as the date library already installed in the project, instead of ad-hoc native `Date` mutation, formatting, comparison, timestamp math, type assertions, or ISO-string slicing.
 
 ## Install
 
@@ -30,11 +30,12 @@ new Date().setMonth(0);
 new Date().toLocaleDateString();
 date.toISOString().split("T")[0];
 new Date().getTime() + 86_400_000;
+new Date(value) <= now;
 Date.now() - startedAt;
 value as Date;
 ```
 
-Ambiguous patterns still need type information. For example, `value.setMonth(0)`, `value.toLocaleString()`, `date.getHours() + 1`, `end - start`, and `value as MaybeDate` are only reported when TypeScript can prove the receiver or asserted type is `Date`.
+Ambiguous patterns still need type information. For example, `value.setMonth(0)`, `value.toLocaleString()`, `date.getHours() + 1`, `expiresAt <= now`, `end - start`, and `value as MaybeDate` are only reported when TypeScript can prove the receiver or asserted type is `Date`.
 
 This fallback is intentionally conservative for common method names. Without type information, `obj.toJSON().slice(0, 10)` and `shift.getHours() + 1` are not treated as date operations, because unrelated objects often expose methods with those names.
 
@@ -85,6 +86,7 @@ Then point ESLint at that project or use `projectService: true` from the config 
   "date-guard/no-date-string-hacks": "error",
   "date-guard/no-date-type-assertion": "error",
   "date-guard/no-manual-date-arithmetic": "error",
+  "date-guard/no-native-date-comparison": "error",
   "date-guard/no-native-date-formatting": "error"
 }
 ```
@@ -205,6 +207,27 @@ new Date(existingDate);
 Date.now();
 date.getTime();
 Number(date);
+```
+
+### `date-guard/no-native-date-comparison`
+
+Disallows native relational comparisons on `Date` values or numbers derived from `Date` methods:
+
+```ts
+new Date(chain.expires_at) <= now;
+start > end;
+date.getTime() >= Date.now();
+Number(endDate) < +startDate;
+```
+
+Allowed:
+
+```ts
+isBefore(expiresAt, now);
+isAfter(start, end);
+compareAsc(expiresAt, now) <= 0;
+start === end;
+date.getTime();
 ```
 
 ### `date-guard/no-date-string-hacks`
